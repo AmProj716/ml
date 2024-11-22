@@ -1,0 +1,147 @@
+# pr 6 decision trees
+
+
+
+
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.datasets import load_iris
+
+# Load the Iris dataset
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+best_accuracy = 0
+best_params = {}
+
+# Define a range of hyperparameters to test
+for criterion in ['gini', 'entropy']:
+  for max_depth in [2, 3, 4, 5, None]:
+    for min_samples_split in [2, 5, 10]:
+      # Create a Decision Tree Classifier
+      dt_classifier = DecisionTreeClassifier(criterion=criterion, max_depth=max_depth, min_samples_split=min_samples_split, random_state=42)
+
+      # Train the classifier
+      dt_classifier.fit(X_train, y_train)
+
+      # Make predictions on the test set
+      y_pred = dt_classifier.predict(X_test)
+
+      # Calculate the accuracy
+      accuracy = accuracy_score(y_test, y_pred)
+
+      # Check if this is the best accuracy so far
+      if accuracy > best_accuracy:
+        best_accuracy = accuracy
+        best_params = {'criterion': criterion, 'max_depth': max_depth, 'min_samples_split': min_samples_split}
+
+# Print the best accuracy and parameters
+print(f"Best Accuracy: {best_accuracy:.4f}")
+print(f"Best Parameters: {best_params}")
+
+# Train and evaluate the decision tree with the best parameters
+dt_classifier = DecisionTreeClassifier(**best_params, random_state=42)
+dt_classifier.fit(X_train, y_train)
+y_pred = dt_classifier.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+
+print(f"Accuracy with best parameters: {accuracy:.4f}")
+
+# Generate and plot the confusion matrix
+cm = confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(8, 6))
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=iris.target_names, yticklabels=iris.target_names)
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.title(f"Confusion Matrix (Best Parameters)")
+plt.show()
+
+# Plot the decision tree
+plt.figure(figsize=(12, 8))
+plot_tree(dt_classifier, feature_names=iris.feature_names, class_names=iris.target_names, filled=True)
+plt.title(f"Decision Tree (Best Parameters)")
+plt.show()
+
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.tree import plot_tree
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris  # Correct import for load_iris
+
+# Load the Iris dataset
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.8, random_state=42)
+
+
+
+#def
+dt_classifier1 = DecisionTreeClassifier(random_state=42)
+dt_classifier1.fit(X_train, y_train)
+y_pred1 = dt_classifier1.predict(X_test)
+
+#max dep
+dt_classifier2 = DecisionTreeClassifier(max_depth=2, random_state=42)
+dt_classifier2.fit(X_train, y_train)
+y_pred2 = dt_classifier2.predict(X_test)
+
+#min sample split
+dt_classifier3 = DecisionTreeClassifier(min_samples_split=20, random_state=42)
+dt_classifier3.fit(X_train, y_train)
+y_pred3 = dt_classifier3.predict(X_test)
+
+
+#eval
+def evaluate_model(y_true, y_pred):
+    accuracy = accuracy_score(y_true, y_pred)
+    cm = confusion_matrix(y_true, y_pred)
+    return accuracy, cm
+
+
+#metric
+accuracy1, cm1 = evaluate_model(y_test, y_pred1)
+accuracy2, cm2 = evaluate_model(y_test, y_pred2)
+accuracy3, cm3 = evaluate_model(y_test, y_pred3)
+
+
+print("Model 1: Default Parameters")
+print(f"Accuracy: {accuracy1:.4f}")
+print("Confusion Matrix:\n", cm1)
+
+print("\nModel 2: max_depth=2")
+print(f"Accuracy: {accuracy2:.4f}")
+print("Confusion Matrix:\n", cm2)
+
+print("\nModel 3: min_samples_split=20")
+print(f"Accuracy: {accuracy3:.4f}")
+print("Confusion Matrix:\n", cm3)
+
+
+# Plot the Decision Trees
+plt.figure(figsize=(12, 6))
+plot_tree(dt_classifier1, feature_names=iris.feature_names, class_names=iris.target_names, filled=True)
+plt.title("Decision Tree (Default Parameters)")
+plt.show()
+
+plt.figure(figsize=(12, 6))
+plot_tree(dt_classifier2, feature_names=iris.feature_names, class_names=iris.target_names, filled=True)
+plt.title("Decision Tree (max_depth=2)")
+plt.show()
+
+plt.figure(figsize=(12, 6))
+plot_tree(dt_classifier3, feature_names=iris.feature_names, class_names=iris.target_names, filled=True)
+plt.title("Decision Tree (min_samples_split=20)")
+plt.show()
+
+

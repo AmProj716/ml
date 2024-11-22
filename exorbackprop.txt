@@ -1,0 +1,39 @@
+# pr 10 bprop+kmeans
+
+from sklearn.neural_network import MLPClassifier
+import numpy as np
+
+# Define the XOR input and output
+X_xor = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+y_xor = np.array([0, 1, 1, 0])
+
+# Define and train the MLP with one hidden layer (2 neurons)
+mlp = MLPClassifier(hidden_layer_sizes=(2,), activation='logistic', max_iter=10000, random_state=1)
+mlp.fit(X_xor, y_xor)
+
+# Test the network and print results
+predictions = mlp.predict(X_xor)
+print("XOR Gate Predictions:")
+for i, prediction in enumerate(predictions):
+    print(f"Input: {X_xor[i]}, Predicted Output: {prediction}")
+
+
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_blobs
+
+# Generate synthetic data
+X, y_true = make_blobs(n_samples=300, centers=4, cluster_std=0.60, random_state=0)
+
+# Define and train KMeans
+kmeans = KMeans(n_clusters=4, random_state=0)
+y_kmeans = kmeans.fit_predict(X)
+
+# Plot the clusters and centroids
+plt.scatter(X[:, 0], X[:, 1], c=y_kmeans, s=50, cmap='viridis')
+centers = kmeans.cluster_centers_
+plt.scatter(centers[:, 0], centers[:, 1], c='red', s=200, alpha=0.75, marker='X')
+plt.title("K-means Clustering")
+plt.xlabel("Feature 1")
+plt.ylabel("Feature 2")
+plt.show()
